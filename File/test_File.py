@@ -32,6 +32,11 @@ def readfile(filename):
     # print(number)
     return number
 
+def writeFile(number):
+    filename = 'output.txt'
+    with open(filename, 'w') as file:
+        file.write('{}'.format(number))
+		
 def main():
     def selection(number):
         # 找出未排序中最小值
@@ -59,6 +64,8 @@ def main():
 
     selection(number)
     print("after sort : ", number)
+	
+	writeFile(number)
 
 if __name__=='__main__':
     main()
