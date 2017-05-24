@@ -103,13 +103,7 @@ def search(number, tf_matrix, doc_word_tf, doc_word_index, file_list):
         print(no[0], ' similarity ---> ', no[1])
         print(file_list[no[0]].title, '     ', file_list[no[0]].section, '\n', doc_word_tf[no[0]])
 
-    value = 0
-    classify = ''
-    for s in set_list:
-        if set_list.get(s) > value:
-            value = set_list.get(s)
-            classify = s
-    print(' ----- ***** ----- ', classify)
+    print(' ----- ***** ----- ', max(set_list.items(), key=itemgetter(1))[0])
 
 def main():
     file_list = readAccess('../Data/ke2016_sample_data.accdb')
