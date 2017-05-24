@@ -1,7 +1,7 @@
 import pyodbc
 import re
 
-import pandas as pd # need to install pandas, openpyxl
+import pandas as pd # need to install pandas, openpyxl, xlrd
 from pandas import DataFrame
 
 from math import log
@@ -19,19 +19,13 @@ def readAccess(str):
     file_list = [row.content for row in crsr.execute("SELECT * FROM ke2016_sample_news WHERE section like '%s' OR section like '%s'" % (str[0], str[1]))]
     return file_list
 
-def writeFile(word_tf, filename, threshold):
-    file = open(filename, 'w', encoding='UTF-8')
-    for word in word_tf:
-        if word_tf.get(word) > threshold: #tf greater than threhold
-            file.write('%s %s\n' % (word, word_tf.get(word)))
-    file.close()
+def writeExcel(long_term_word, filename, sheet):
+    df = pd.DataFrame(list(long_term_word),
+                      columns=['Key', 'TFIDF'])
 
-def writeSortFile(word_tf_sort, filename, threshold):
-    file = open(filename, 'w', encoding='UTF-8')
-    for word in word_tf_sort:
-        if word[1] > threshold: #tf greater than threhold
-            file.write('%s %s\n' % (word[0], word[1]))
-    file.close()
+    writer = pd.ExcelWriter(filename)
+    df.to_excel(writer, sheet, index=False)
+    writer.save()
 
 def getNGrams(line_list, n):
     ngrams = []
@@ -87,9 +81,6 @@ def main():
 
     print('All of ngram with term frequency:', len(word_tf))
 
-    #word_tf_sort = sorted(word_tf.items(), key=itemgetter(1), reverse=True)
-    #writeSortFile(word_tf_sort, 'output_sort.txt', 3)  # for word_tf sorted by value
-
     doc_word_index = create_index(doc_word)
     print('----- Finish Inverted Index ------')
     # print(doc_word_index.keys())
@@ -117,6 +108,8 @@ def main():
     print('length of long-term word :', len(long_term_word))
     for word in long_term_word:
         print(word[0], ' ', word[1])
+
+    writeExcel(long_term_word, 'output.xlsx', 'Sheet1')
 
 if __name__ == '__main__':
     main()
