@@ -1,7 +1,7 @@
 import pyodbc
 import re
 
-import pandas as pd # need to install pandas, openpyxl, xlrd
+import pandas as pd # need to install pandas, openpyxl
 from pandas import DataFrame
 
 from math import log
@@ -109,7 +109,7 @@ def main():
     for word in long_term_word:
         print(word[0], ' ', word[1])
 
-    writeExcel(long_term_word, 'output.xlsx', 'Sheet1')
+    writeExcel(long_term_word, 'Keyword_myself.xlsx', 'Sheet1')
 
 if __name__ == '__main__':
     main()
