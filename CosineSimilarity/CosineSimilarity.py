@@ -22,8 +22,14 @@ def readAccess(database):
     cnxn = pyodbc.connect(conn_str)
     crsr = cnxn.cursor()
     file_list = []
+    tmp_class_list = [['財經'], ['體育', '運動'], ['政治'], ['兩岸'], ['娛樂', '影視'], ['社會'], ['家庭']]
+    class_list = ['財經', '體育', '政治', '兩岸', '娛樂', '社會', '家庭']
     for row in crsr.execute("SELECT * FROM ke2016_sample_news"):
-        file_list.append(token(row.id, row.title, row.section, row.content))
+        for i in range(0, 7):
+            for j in tmp_class_list[i]:
+                if row.section.find(j) != -1:
+                    new_section = class_list[i]
+        file_list.append(token(row.id, row.title, new_section, row.content))
     return file_list
 
 def readExcel(filename, sheet):
@@ -90,10 +96,20 @@ def search(number, tf_matrix, doc_word_tf, doc_word_index, file_list):
     print('number of file :', len(cos_sim_list))
     cos_sim_list_sort = word_tfidf_sort = sorted(cos_sim_list.items(), key=itemgetter(1), reverse=True)
 
+    set_list = defaultdict(int)
     print(file_list[number].title, '     ', file_list[number].section, '\n', doc_word_tf[number])
     for no in cos_sim_list_sort[0:7]:
+        set_list[file_list[no[0]].section] += 1
         print(no[0], ' similarity ---> ', no[1])
         print(file_list[no[0]].title, '     ', file_list[no[0]].section, '\n', doc_word_tf[no[0]])
+
+    value = 0
+    classify = ''
+    for s in set_list:
+        if set_list.get(s) > value:
+            value = set_list.get(s)
+            classify = s
+    print(' ----- ***** ----- ', classify)
 
 def main():
     file_list = readAccess('../Data/ke2016_sample_data.accdb')
