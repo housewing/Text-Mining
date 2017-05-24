@@ -1,7 +1,7 @@
 TermFrequency.py
-I implement N-Grams and calculate term frequency by myself to extrace keyword
+I implement N-Grams and calculate Term frequency by myself
 
 TermFrequency_jieba.py
-I use jieba.py library to extract keyword
+I use jieba library to calculate Term Frequency
 
 2017/5/24
