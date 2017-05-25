@@ -2,7 +2,8 @@ I implement navie bayers algorithm by myself
 
 And tf_matrix like:
 
-file ******************************
+    
+file * * * * * * * * * * * * * * *  <---- key word
 0    * 0 0 0 4 0 0 2 0 3 0 0 0 0...
 1    * 0
 2    * 1
@@ -20,4 +21,4 @@ col means key word
 
 probability_matrix also like previous figure, but only have seven rows 
 
-2017/5/24
+2017/5/25
