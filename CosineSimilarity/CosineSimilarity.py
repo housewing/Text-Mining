@@ -14,6 +14,9 @@ class token:
         self.section = section
         self.content = content
 
+def change_class(x):
+    return {'財經' : '財經', '體育' : '體育', '運動' : '體育', '政治' : '政治', '兩岸' : '兩岸', '娛樂' : '娛樂', '影劇' : '娛樂', '社會' : '社會', '家庭' : '家庭'}[x]
+
 def readAccess(database):
     conn_str = (
         r'DRIVER={Microsoft Access Driver (*.mdb, *.accdb)};'
@@ -22,14 +25,8 @@ def readAccess(database):
     cnxn = pyodbc.connect(conn_str)
     crsr = cnxn.cursor()
     file_list = []
-    tmp_class_list = [['財經'], ['體育', '運動'], ['政治'], ['兩岸'], ['娛樂', '影視'], ['社會'], ['家庭']]
-    class_list = ['財經', '體育', '政治', '兩岸', '娛樂', '社會', '家庭']
     for row in crsr.execute("SELECT * FROM ke2016_sample_news"):
-        for i in range(0, 7):
-            for j in tmp_class_list[i]:
-                if row.section.find(j) != -1:
-                    new_section = class_list[i]
-        file_list.append(token(row.id, row.title, new_section, row.content))
+        file_list.append(token(row.id, row.title, change_class(row.section[:2]), row.content))
     return file_list
 
 def readExcel(filename, sheet):
