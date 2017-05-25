@@ -76,7 +76,7 @@ def createTFmatrix(row, col, doc_word_tf, key_list):
     #         print(i, ' ', tf_matrix[0][i])
     return tf_matrix
 
-def search(number, tf_matrix, doc_word_tf, doc_word_index, file_list):
+def searchKNN(number, tf_matrix, doc_word_tf, doc_word_index, file_list):
     doc_list = defaultdict(int)
     for word in doc_word_tf[number]:
         # print(word, '', doc_word_tf[number].get(word))
@@ -97,13 +97,13 @@ def search(number, tf_matrix, doc_word_tf, doc_word_index, file_list):
     cos_sim_list_sort = word_tfidf_sort = sorted(cos_sim_list.items(), key=itemgetter(1), reverse=True)
 
     set_list = defaultdict(int)
-    print(file_list[number].title, '     ', file_list[number].section, '\n', doc_word_tf[number])
+    print(' ----- ***** ----- : ', file_list[number].title, '     ', file_list[number].section, '\n', doc_word_tf[number])
     for no in cos_sim_list_sort[0:7]:
         set_list[file_list[no[0]].section] += 1
         print(no[0], ' similarity ---> ', no[1])
         print(file_list[no[0]].title, '     ', file_list[no[0]].section, '\n', doc_word_tf[no[0]])
 
-    print(' ----- ***** ----- ', max(set_list.items(), key=itemgetter(1))[0])
+    print('Classify :', max(set_list.items(), key=itemgetter(1))[0])
 
 def main():
     file_list = readAccess('../Data/ke2016_sample_data.accdb')
@@ -133,7 +133,7 @@ def main():
 
     while True:
         number = int(input('Please input number ( 0 - 13801 ):')) #5000
-        search(number, tf_matrix, doc_word_tf, doc_word_index, file_list)
+        searchKNN(number, tf_matrix, doc_word_tf, doc_word_index, file_list)
         if(input('continue? (q to exit)') == 'q'):
             break
 
