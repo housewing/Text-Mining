@@ -47,8 +47,8 @@ def parsePDF(input_path, file_name):
                 #     print(out.get_text())
 
 def main():
-    data_dir = '../HP_Data/'
-    output_dir = '../HP_Data/HarryPotter/'
+    data_dir = '../Data/'
+    output_dir = '../Data/HarryPotter/'
 
     #read all of file from folder
     file_data = []
