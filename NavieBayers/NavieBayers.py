@@ -19,7 +19,7 @@ class token:
 def change_class(x):
     return {'財經' : '財經', '體育' : '體育', '運動' : '體育', '政治' : '政治', '兩岸' : '兩岸', '娛樂' : '娛樂', '影劇' : '娛樂', '社會' : '社會', '家庭' : '家庭'}[x]
 
-def readAccess(database):
+def read_access(database):
     conn_str = (
         r'DRIVER={Microsoft Access Driver (*.mdb, *.accdb)};'
         r'DBQ=' + database + ';'
@@ -31,7 +31,7 @@ def readAccess(database):
         file_list.append(token(row.id, row.title, change_class(row.section[:2]), row.content))
     return file_list
 
-def readExcel(filename, sheet):
+def read_excel(filename, sheet):
     key_list = defaultdict(int)
     df = pd.read_excel(filename, header=[0], index_col=[0], sheetname=sheet)
     count = 0
@@ -40,22 +40,22 @@ def readExcel(filename, sheet):
         count += 1
     return key_list
 
-def getNGrams(line_list, n):
+def ngrams(line_list, n):
     ngrams = []
     for i in range(len(line_list) - ( n - 1)):
         ngrams.append(line_list[i : i + n])
     return ngrams
 
-def tagDocKeyWord(line, key_list):
+def tag_doc_keyword(line, key_list):
     doc_word_tf = defaultdict(int)
     for tmp_line in line:
         for i in range(2, len(tmp_line) + 1 if len(tmp_line) < 9 else 9):
-            for word in getNGrams(tmp_line, i):
+            for word in ngrams(tmp_line, i):
                 if key_list.get(word) != None:
                     doc_word_tf[word] += 1
     return doc_word_tf
 
-def createTFmatrix(file_list, col, doc_word_tf, key_list):
+def create_tf_matrix(file_list, col, doc_word_tf, key_list):
     tf_matrix = np.zeros((len(file_list), col))  # initial matrix
     for i in range(0, len(tf_matrix)):
         doc_word = doc_word_tf[i]
@@ -69,7 +69,7 @@ def createTFmatrix(file_list, col, doc_word_tf, key_list):
     #         print(i, ' ', tf_matrix[0][i])
     return tf_matrix
 
-def createProbabilityMatrix(tf_matrix, key_len, file_len):
+def create_probability_matrix(tf_matrix, key_len, file_len):
     class_len = len(class_list)
     sum_matrix = np.zeros((class_len, key_len + 1))  # initial  matrix
     for matrix in tf_matrix:
@@ -108,12 +108,12 @@ def navieBayers(number, probability_matrix, tf_matrix, doc_word_tf, key_len, fil
     print(' ----- ***** ----- ', max(set_list.items(), key=itemgetter(1))[0], ' ', max(set_list.items(), key=itemgetter(1))[1])
 
 def main():
-    file_list = readAccess('../Data/ke2016_sample_data.accdb')
+    file_list = read_access('../Data/ke2016_sample_data.accdb')
     print('length of file :', len(file_list))
     # for file in file_list[0:5]:
     #     print('id :', file.id, ' title :', file.title, ' section :', file.section, ' number :', file.num)
 
-    key_list = readExcel('../Data/keyword_2100.xlsx', 'Sheet1')
+    key_list = read_excel('../Data/keyword_2100.xlsx', 'Sheet1')
     print('length of keyword :', len(key_list))
     # for key in key_list:
     #     print(key, ' ', key_list.get(key))
@@ -121,15 +121,15 @@ def main():
     doc_word_tf = []
     line_list = [[line for line in re.split('，|。| |、|<BR>●|<BR>|：', file.content)] for file in file_list]
     for line in line_list:
-        doc_word_tf.append(tagDocKeyWord(line, key_list))
+        doc_word_tf.append(tag_doc_keyword(line, key_list))
     print('----- Finish Tag Doc -----')
 
     #create a tf matrix by numpy
     key_len = len(key_list)
-    tf_matrix = createTFmatrix(file_list, key_len + 1, doc_word_tf, key_list)
+    tf_matrix = create_tf_matrix(file_list, key_len + 1, doc_word_tf, key_list)
     print('----- Finish TF matrix ------')
 
-    probability_matrix = createProbabilityMatrix(tf_matrix, key_len, len(file_list))
+    probability_matrix = create_probability_matrix(tf_matrix, key_len, len(file_list))
     print('----- Finish probability matrix ------')
 
     while True:
