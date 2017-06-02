@@ -9,7 +9,7 @@ from operator import itemgetter
 import re
 import math
 
-def readAccess(str):
+def read_access(str):
     database = '../Data/ke2016_sample_data.accdb'
     conn_str = (
         r'DRIVER={Microsoft Access Driver (*.mdb, *.accdb)};'
@@ -20,7 +20,7 @@ def readAccess(str):
     file_list = [row.content for row in crsr.execute("SELECT * FROM ke2016_sample_news WHERE section like '%s' OR section like '%s'" % (str[0], str[1]))]
     return file_list
 
-def writeExcel(word_tfidf_sort, filename, sheet):
+def write_excel(word_tfidf_sort, filename, sheet):
     print('----- Write Excel -----')
     df = pd.DataFrame(list(word_tfidf_sort),
                       columns=['Key', 'TFIDF'])
@@ -30,7 +30,7 @@ def writeExcel(word_tfidf_sort, filename, sheet):
     df.to_excel(writer, sheet, index=False)
     writer.save()
 
-def calTermFrequency(line, word_tf):
+def cal_term_frequency(line, word_tf):
     doc_word = defaultdict(list)  # record a doc with what words
     for tmp_line in line:
         for seg in jieba.cut(tmp_line, cut_all=False):
@@ -48,14 +48,14 @@ def create_index(data):
 def main():
     jieba.set_dictionary('dict.txt.big')  # for Chinese(Traditional)
     str = ['%財經%', '%產經%']
-    file_list = readAccess(str)
+    file_list = read_access(str)
     print('All of file :', len(file_list))
 
     doc_word = []
     word_tf = defaultdict(int)
     line_list = [[line for line in re.split('，|。| |、|<BR>●|<BR>|：', file)] for file in file_list]
     for line in line_list:
-        doc_word.append(calTermFrequency(line, word_tf))
+        doc_word.append(cal_term_frequency(line, word_tf))
 
     print('All of ngram with term frequency:', len(word_tf))
 
@@ -80,7 +80,7 @@ def main():
     # print('length of word_tfidf :', len(word_tfidf))
 
     word_tfidf_sort = sorted(word_tfidf.items(), key=itemgetter(1), reverse=True)
-    writeExcel(word_tfidf_sort, 'Keyword_jieba.xlsx', 'Sheet1')
+    write_excel(word_tfidf_sort, 'Keyword_jieba.xlsx', 'Sheet1')
     # for word in word_tfidf_sort:
     #     print(word[0], ' ', word[1])
 
