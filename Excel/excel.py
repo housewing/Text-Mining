@@ -2,15 +2,15 @@ import pandas as pd # need to install pandas, openpyxl
 from pandas import DataFrame
 from collections import  defaultdict
 
-def getNGrams(line_list, n):
+def ngrams(line_list, n):
     ngrams = []
     for i in range(len(line_list) - ( n - 1)):
         ngrams.append(line_list[i : i + n])
     return ngrams
 
-def calTermFrequency(tmp_line, word_tf):
+def cal_term_frequency(tmp_line, word_tf):
     for i in range(2, len(tmp_line) + 1 if len(tmp_line) < 9 else 9):
-        for word in getNGrams(tmp_line, i):
+        for word in ngrams(tmp_line, i):
             word_tf[word] += 1
 
 def main():
@@ -23,7 +23,7 @@ def main():
 
     word_tf = defaultdict(int)
     for str in str_list:
-        calTermFrequency(str, word_tf)
+        cal_term_frequency(str, word_tf)
     print('word_tf :', word_tf)
 
     print('----- Write Excel -----')
