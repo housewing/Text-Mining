@@ -42,7 +42,7 @@ def main():
         print(word, ' ', word[0], ' ', word[1])
 
 if __name__ == '__main__':
-    main()
+    main() 
 
 #http://pandas.pydata.org/pandas-docs/stable/dsintro.html.
 #https://stackoverflow.com/questions/18837262/convert-python-dict-into-a-dataframe
