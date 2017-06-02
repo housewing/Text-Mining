@@ -1,7 +1,7 @@
 import os
 import sys
 
-def readfile(filename):
+def read_file(filename):
     file = open(filename, 'r', encoding='UTF-8')
     try:
         # method one
@@ -32,7 +32,7 @@ def readfile(filename):
     # print(number)
     return number
 
-def writeFile(number):
+def write_file(number):
     filename = 'output.txt'
     with open(filename, 'w') as file:
         file.write('{}'.format(number))
@@ -59,13 +59,13 @@ def main():
                 number[i], number[m] = number[m], number[i]
                 # print("after : ", number[i], " ", number[i + 1])
 
-    number = readfile('../Data/num.txt')
+    number = read_file('../Data/num.txt')
     print("before sort : ", number)
 
     selection(number)
     print("after sort : ", number)
-	
-	writeFile(number)
+
+    write_file(number)
 
 if __name__=='__main__':
     main()
