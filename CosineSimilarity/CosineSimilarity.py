@@ -17,7 +17,7 @@ class token:
 def change_class(x):
     return {'財經' : '財經', '體育' : '體育', '運動' : '體育', '政治' : '政治', '兩岸' : '兩岸', '娛樂' : '娛樂', '影劇' : '娛樂', '社會' : '社會', '家庭' : '家庭'}[x]
 
-def readAccess(database):
+def read_access(database):
     conn_str = (
         r'DRIVER={Microsoft Access Driver (*.mdb, *.accdb)};'
         r'DBQ=' + database + ';'
@@ -29,7 +29,7 @@ def readAccess(database):
         file_list.append(token(row.id, row.title, change_class(row.section[:2]), row.content))
     return file_list
 
-def readExcel(filename, sheet):
+def read_excel(filename, sheet):
     key_list = defaultdict(int)
     df = pd.read_excel(filename, header=[0], index_col=[0], sheetname=sheet)
     count = 0
@@ -38,17 +38,17 @@ def readExcel(filename, sheet):
         count += 1
     return key_list
 
-def getNGrams(line_list, n):
+def ngrams(line_list, n):
     ngrams = []
     for i in range(len(line_list) - ( n - 1)):
         ngrams.append(line_list[i : i + n])
     return ngrams
 
-def tagDocKeyWord(line, key_list):
+def tag_doc_keyword(line, key_list):
     doc_word_tf = defaultdict(int)
     for tmp_line in line:
         for i in range(2, len(tmp_line) + 1 if len(tmp_line) < 9 else 9):
-            for word in getNGrams(tmp_line, i):
+            for word in ngrams(tmp_line, i):
                 if key_list.get(word) != None:
                     doc_word_tf[word] += 1
     return doc_word_tf
@@ -60,7 +60,7 @@ def createIndex(data):
             index[token].append(i)
     return index
 
-def createTFmatrix(row, col, doc_word_tf, key_list):
+def create_tf_matrix(row, col, doc_word_tf, key_list):
     tf_matrix = np.zeros((row, col))  # initial matrix
     for i in range(len(tf_matrix)):
         doc_word = doc_word_tf[i]
@@ -73,7 +73,7 @@ def createTFmatrix(row, col, doc_word_tf, key_list):
     #         print(i, ' ', tf_matrix[0][i])
     return tf_matrix
 
-def searchKNN(number, tf_matrix, doc_word_tf, doc_word_index, file_list):
+def search_knn(number, tf_matrix, doc_word_tf, doc_word_index, file_list):
     doc_list = defaultdict(int)
     for word in doc_word_tf[number]:
         # print(word, '', doc_word_tf[number].get(word))
@@ -103,12 +103,12 @@ def searchKNN(number, tf_matrix, doc_word_tf, doc_word_index, file_list):
     print('Classify :', max(set_list.items(), key=itemgetter(1))[0])
 
 def main():
-    file_list = readAccess('../Data/ke2016_sample_data.accdb')
+    file_list = read_access('../Data/ke2016_sample_data.accdb')
     print('length of file :', len(file_list))
     # for file in file_list[0:5]:
     #     print('id :', file.id, ' title :', file.title, ' section :', file.section, ' number :', file.num)
 
-    key_list = readExcel('../Data/keyword_2100.xlsx', 'Sheet1')
+    key_list = read_excel('../Data/keyword_2100.xlsx', 'Sheet1')
     print('length of keyword :', len(key_list))
     # for key in key_list:
     #     print(key, ' ', key_list.get(key))
@@ -116,7 +116,7 @@ def main():
     doc_word_tf = []
     line_list = [[line for line in re.split('，|。| |、|<BR>●|<BR>|：', file.content)] for file in file_list]
     for line in line_list:
-        doc_word_tf.append(tagDocKeyWord(line, key_list))
+        doc_word_tf.append(tag_doc_keyword(line, key_list))
     print('----- Finish Tag Doc -----')
 
     doc_word_index = createIndex(doc_word_tf)
@@ -125,12 +125,12 @@ def main():
     # print(doc_word_index['宏碁'])
 
     #create a tf matrix by numpy
-    tf_matrix = createTFmatrix(len(file_list), len(key_list), doc_word_tf, key_list)
+    tf_matrix = create_tf_matrix(len(file_list), len(key_list), doc_word_tf, key_list)
     print('----- Finish TF matrix ------')
 
     while True:
         number = int(input('Please input number ( 0 - 13801 ):')) #5000
-        searchKNN(number, tf_matrix, doc_word_tf, doc_word_index, file_list)
+        search_knn(number, tf_matrix, doc_word_tf, doc_word_index, file_list)
         if(input('continue? (q to exit)') == 'q'):
             break
 
