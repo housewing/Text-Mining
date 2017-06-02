@@ -8,7 +8,7 @@ from math import log
 from collections import  defaultdict #dictionary method three
 from operator import itemgetter # sort dictionart value
 
-def readAccess(str):
+def read_access(str):
     database = '../Data/ke2016_sample_data.accdb'
     conn_str = (
         r'DRIVER={Microsoft Access Driver (*.mdb, *.accdb)};'
@@ -19,7 +19,7 @@ def readAccess(str):
     file_list = [row.content for row in crsr.execute("SELECT * FROM ke2016_sample_news WHERE section like '%s' OR section like '%s'" % (str[0], str[1]))]
     return file_list
 
-def writeExcel(long_term_word, filename, sheet):
+def write_excel(long_term_word, filename, sheet):
     df = pd.DataFrame(list(long_term_word),
                       columns=['Key', 'TFIDF'])
 
@@ -27,17 +27,17 @@ def writeExcel(long_term_word, filename, sheet):
     df.to_excel(writer, sheet, index=False)
     writer.save()
 
-def getNGrams(line_list, n):
+def ngrams(line_list, n):
     ngrams = []
     for i in range(len(line_list) - ( n - 1)):
         ngrams.append(line_list[i : i + n])
     return ngrams
 
-def calTermFrequency(line, word_tf):
+def cal_term_frequency(line, word_tf):
     doc_word = defaultdict(list) #record a doc with what words
     for tmp_line in line:
         for i in range(2, len(tmp_line) + 1 if len(tmp_line) < 9 else 9):
-            for word in getNGrams(tmp_line, i):
+            for word in ngrams(tmp_line, i):
                 word_tf[word] += 1
                 doc_word[word] = 1
     return doc_word
@@ -49,7 +49,7 @@ def create_index(data):
             index[token].append(i)
     return index
 
-def getLongTermWordBySameValue(word_tfidf, tfidf_value):
+def get_long_term_word_by_same_value(word_tfidf, tfidf_value):
     long_term_word_by_same_value = defaultdict()
     for value in tfidf_value:
         tmp_list = []
@@ -70,14 +70,14 @@ def getLongTermWordBySameValue(word_tfidf, tfidf_value):
 
 def main():
     str = ['%財經%', '%產經%']
-    file_list = readAccess(str)
+    file_list = read_access(str)
     print('All of file :', len(file_list))
 
     doc_word = []
     word_tf = defaultdict(int)
     line_list = [[line for line in re.split('，|。| |、|<BR>●|<BR>|：|-', file)] for file in file_list]
     for line in line_list:
-        doc_word.append(calTermFrequency(line, word_tf))
+        doc_word.append(cal_term_frequency(line, word_tf))
 
     print('All of ngram with term frequency:', len(word_tf))
 
@@ -103,13 +103,13 @@ def main():
     print('length of word_tfidf :', len(word_tfidf))
     print('length of tfidf_value :', len(tfidf_value))
 
-    long_term_word = getLongTermWordBySameValue(word_tfidf, tfidf_value)
+    long_term_word = get_long_term_word_by_same_value(word_tfidf, tfidf_value)
 
     print('length of long-term word :', len(long_term_word))
     for word in long_term_word:
         print(word[0], ' ', word[1])
 
-    writeExcel(long_term_word, 'Keyword_myself.xlsx', 'Sheet1')
+    write_excel(long_term_word, 'Keyword_myself.xlsx', 'Sheet1')
 
 if __name__ == '__main__':
     main()
