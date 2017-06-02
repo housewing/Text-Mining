@@ -6,7 +6,7 @@ If you don't have pdfminer3k module, the easiest way to install is to use pip in
 
 Note: Some PDF has already encrypted, but password is blank space.
 
-Inorder to decrypt, you need to download 'qpdf'and below is download link:
+In order to decrypt, you need to download 'qpdf'and below is download link:
 
 	https://sourceforge.net/projects/qpdf/
 

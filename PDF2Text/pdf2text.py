@@ -8,12 +8,12 @@ from pdfminer.pdfinterp import PDFTextExtractionNotAllowed
 
 from subprocess import call #decrypt pdf
 
-def decryptPDF(input_path, output_path, file_name):
+def decrypt_pdf(input_path, output_path, file_name):
     input_file = input_path + file_name
     output_file = output_path + file_name
     call('qpdf --password=%s --decrypt %s %s' % ('', input_file, output_file), shell=True)
 
-def parsePDF(input_path, file_name):
+def parse_pdf(input_path, file_name):
     input_file = input_path + file_name
     fp = open(input_file, 'rb')
 
@@ -62,11 +62,10 @@ def main():
     print('Filter File')
     for file_name in filter_list:
         print('Decrypt File:', file_name)
-        decryptPDF(data_dir, output_dir, file_name)
+        decrypt_pdf(data_dir, output_dir, file_name)
         print('---- convert PDF to TEXT -----')
-        parsePDF(output_dir, file_name)
+        parse_pdf(output_dir, file_name)
         print('Finish:', file_name, '!!!')
-
 
 if __name__ == '__main__':
     main()
